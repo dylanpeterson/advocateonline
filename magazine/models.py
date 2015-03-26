@@ -134,16 +134,28 @@ class Subscriber(models.Model):
 
     name = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
-    streetAddress1 = models.CharField(max_length=255)
+    streetAddress1 = models.CharField(max_length=255, verbose_name="Street Address")
     streetAddress2 = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
-    zipCode = models.CharField(max_length=255)
-    customerID = models.CharField(max_length=255)
+    zipCode = models.CharField(max_length=255, verbose_name="Zip Code")
+    customerID = models.CharField(max_length=255, verbose_name="Customer ID")
     renew = models.BooleanField(default=False)
-    subscriptionType = models.CharField(max_length=255, choices=SUBSCRIPTION_CHOICES)
+    subscriptionType = models.CharField(max_length=255, choices=SUBSCRIPTION_CHOICES, verbose_name="Subscription Type")
     time = models.CharField(max_length=255)
+
+    def address(self):
+     # Can't use .format because name is not always
+     return str(self.streetAddress1) + str(self.streetAddress2)
+     # return '/contributor/{0}/{1}'.format(self.id, self.slug())
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return '/subscriber/{0}/'.format(self.name, self.email)
+
 
 class Purchase(models.Model):
 
@@ -159,4 +171,9 @@ class Purchase(models.Model):
     amount = models.IntegerField()
     purchases_json = models.CharField(max_length=255)
     time = models.CharField(max_length=255)
+
+class SubManager(models.Model):
+
+    name = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
 

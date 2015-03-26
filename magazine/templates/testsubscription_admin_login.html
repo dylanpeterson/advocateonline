@@ -1,0 +1,64 @@
+{% extends "base_original.html" %}
+
+
+{% block content %}
+
+
+<div class="container">
+
+	 <h1 class="header">SUBSCRIPTION MANAGER LOG IN</h1>
+
+	<div style="margin: 40px auto 0px auto; background: #eee; max-width: 325px; padding: 20px;">
+	<form name="loginform" onSubmit="return validateForm()" action="subscription_admin" method="post">
+
+		{% csrf_token %}
+
+	 <h3 class="signup-subheading" style="margin-top: 5px">Login Information</h3>
+		<div class="form-group row">
+    		<label class="col-md-4 control-label" for="username">User Name: </label>
+    		<div class="col-md-8">
+        		<input class="form-control input-md" id="user" required="1" name="user" type="text" placeholder="User Name">                    
+    		</div>
+		</div>
+	
+		<div class="form-group row">
+		    <label class="col-md-4 control-label" for="password">Password: </label>
+
+		    <div class="col-md-8">
+		        <input class="form-control input-md" id="password" required="1" name="password" type="password" placeholder="Password">
+		    </div>
+		</div>
+		<button type="submit" class="btn btn-success btn-block">Login</button>
+
+	</form>
+		</div>
+
+            <div class="row" style="border-bottom: 1px solid black;" data-right-height>
+                
+                <h3>{{ admin.password }}</h3> 
+
+</div>
+
+	<script>
+		function validateForm() {
+			var un = document.loginform.user.value;
+			var pw = document.loginform.password.value;
+
+
+			{% for admin in admins %}
+
+			var username = admin.name;
+			var password = admin.password;
+
+			if ((un === username) && (pw === password)) {
+				return true;
+			}
+
+			{% endfor %}
+			return false;
+
+			alert ("Unsucessful Login. Check your username and password or contact a site administrator");
+		}
+	</script>
+
+	{% endblock %}

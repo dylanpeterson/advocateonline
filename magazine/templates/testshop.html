@@ -1,0 +1,178 @@
+{% extends "base_original.html" %}{% block content %}
+{% load staticfiles %}
+
+<div class="container">
+    <h1 class="header">SHOP</h1>
+
+    <p class = "text" style="margin-bottom: 20px;"> Welcome to The Harvard Advocate's Store! Below you can find back issues that you may purchase. All issues are $10 (domestic shipping $2; international shipping $5) unless otherwise indicated. Check back with us for Advogear as well. You can use the online checkout system by clicking "Add to Cart" below the thumbnails.</p>
+
+    <form  style="text-align: center;" action="/cart" method="post" id="shopping-cart">
+
+         <a class="no-decoration top-line" style="font-size: 30px; font-family: league_gothicregular;" href="/cart">View Cart</a>
+
+    <div style-"margin-top: 20px, text-align: center;">
+        {% for issue in issues %}
+
+        <script type="text/javascript">
+    
+    
+/* from http://www.the-art-of-web.com/ */
+    function getCookie(name){
+        var re = new RegExp(name + "=([^;]+)");
+        var value = re.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+     }
+
+    var today = new Date();
+    var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+    function setCookie(name, value){
+        document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+    }
+
+    var expired = new Date(today.getTime() - 24 * 3600 * 1000); // less 24 hours
+
+    // Everything Below by Dylan
+
+    /*
+    function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }*/
+    
+    function addQty(elID){
+
+        var name = elID;
+        var qty = getCookie(name);
+ 
+        if (qty == "NaN" || qty == null || qty == 0) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            var cart = getCookie("cart");
+            if (cart == "NaN" || cart == null ) {
+                setCookie("cart",name);
+                setCookie("total",1);
+             }
+            else {
+                var incart = getCookie("cart");
+                incart = String(incart) + "&" + String(name);
+                setCookie("cart",incart);
+            }
+        }
+        else {
+
+            //var newqty = parseInt(qty) + 1; 
+
+            alert(qty);
+            setCookie(name, newqty);
+
+            var tester=getCookie(name);
+            alert(name);
+            alert(tester);
+
+        }
+    }
+
+        </script>
+            {% if forloop.counter0|divisibleby:4 %}
+                <div class="row" style="border-bottom: 1px solid black;" data-right-height>
+            {% endif %}
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+
+                <h3>{{ issue.name }}</h3>
+                <!-- How to check if image exists: 
+                http://stackoverflow.com/questions/6637168/python-django-templates-and-testing-if-a-variable-is-null-or-empty-string?rq=1
+                http://stackoverflow.com/questions/12507281/determine-empty-template-variable-in-django -->
+                {% if issue.cover_image and issue.cover_image|length > 0 %}
+                
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}{{ issue.cover_image }}"></a></figure>
+                {% else %}
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}image-not-available.jpg"></a></figure>
+                
+                {% endif %}
+
+                <div align = "center" style="margin-bottom: 20px;">
+
+                    {% if issue.name = 'Winter 2014' %}
+                        <h5>Please contact our <a href="mailto:contact@theharvardadvocate.com">circulation manager</a> if you are interested in buying this issue.</h5>
+                    {% else %}
+                    <h4>Print $10</h4>  
+
+                    <div id="{{issue.id}}"> <input type='button' class="addtocart" id="{{issue.id}}" issueID={{issue.id}} onclick='javascript: addQty(" {{isssue.id}} " );' value='Add to Cart'/>  </div>
+
+                    <!--<script type="text/javascript">
+                               
+                            buttonfiller("{{issue.id}}");
+                                
+                    </script>   -->         
+                    
+                {% endif %}
+
+                </div>
+
+            </div>
+
+            {% if forloop.counter|divisibleby:4 %}
+        </div>
+        {% endif %}
+
+
+        {% endfor %}
+
+     </div>    
+    {% csrf_token %}
+
+    </form>
+
+{% endblock %}

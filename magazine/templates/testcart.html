@@ -1,0 +1,526 @@
+{% extends "base_original.html" %}{% block content %}
+{% load staticfiles %}
+
+<div class="container">
+
+    
+ <h1 class="header">CART</h1>
+
+    <div align = "center" style="margin-top: 1px; margin-top: 15px">
+
+        <form  style="text-align: center;" action="/cart" method="post" id="shopping-cart">
+
+        <a class="no-decoration top-line" style="font-size: 30px; font-family: league_gothicregular;" href="/shop">Return to Shop</a>
+    </div>
+
+    <div  style"text-align: center;">
+
+        <div class="row" data-right-height>
+
+            {% for issue in issues %}
+
+            <div class="row" data-right-height>
+
+    <script type="text/javascript">
+
+
+           /* from http://www.the-art-of-web.com/ */
+            function deleteCookie(name)
+                {
+                    document.cookie=name + "=null; path=/; expires=" + expired.toGMTString();
+                }
+
+            function getCookie(name)
+                {
+                    var re = new RegExp(name + "=([^;]+)");
+                    var value = re.exec(document.cookie);
+                    return (value != null) ? unescape(value[1]) : null;
+                }
+
+                var today = new Date();
+                var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+            // Below written by Dylan
+            function littleoldlady(string)  
+            {
+                var cart = getCookie("cart");
+                cart = String(cart);
+                var brokencart = cart.split("&");
+
+                for (var i = 0; i <= brokencart.length - 1; i++) {
+       
+                    var name = String(brokencart[i]);
+              
+                    var searchname = String(name).concat("-txt");
+             
+                    var newqty=String(document.getElementById(searchname).value);
+             
+                    if (newqty < 0){
+                        newqty = 0;
+                        alert("TRICKSTER");
+                    }
+
+                    var total = getCookie("total");
+                    var newtotal = parseInt(total) + newqty;
+                    setCookie("total",newtotal);
+
+                        setCookie(name, newqty);
+                        var testerdoo = getCookie(name);
+                    checkcookiedeleter(name);
+                    }
+                   location.reload();
+            }
+                
+            function checkcookiedeleter(cookietype)  
+            {
+                var name = cookietype;
+                var qty = getCookie(name);
+                alert(qty);
+                if (qty == 0)
+                {
+                   rmfrmcrt(name);
+                    deleteCookie(name);
+                }
+
+            }
+
+            function rmfrmcrt(cookietype){
+                var name = cookietype;
+                var cart = getCookie("cart");
+
+                alert("In Cart is:");
+                    alert(cart);
+        
+                    var brokencart = cart.split("&");
+
+                    for (var i = 0; i <= brokencart.length - 1; i++) {
+                    if (brokencart[i] == name) {
+                    alert("win!");
+                    if (i == 0){
+                        alert("first!");
+                        if (brokencart.length - 1 == 0) {
+                            alert("nothing left in cart!");
+                            setCookie("cart",null);
+                            var testerboo = getCookie("cart");
+                            alert(testerboo);
+                            deleteCookie(name);
+                            var testerboo2 = getCookie(name);
+                            alert(testerboo2);
+                        }
+                        else {
+                            alert("first! not only");
+                            newcart = brokencart.splice(i, 2);
+                            alert(brokencart);
+                            newcart = newcart.join();
+                            setCookie("cart",newcart);
+                            var testerboo = getCookie("cart");
+                            alert(testerboo);
+                        }
+                    }
+                    else{
+                        alert("middle! or last!");
+                        newcart = brokencart.splice((i-1), 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+            }
+        }
+
+      
+                function hideOrSeek(elID){
+
+                    populatecart();
+
+                    var name = elID;
+
+                    alert(name);
+                    name = String(name);
+
+
+
+                    var cart = getCookie("cart");
+                    
+                    cart = String(cart);
+                  
+                    var qty = getCookie(name);
+
+                    alert(cart);
+                    
+                    var brokencart = cart.split("&");
+
+                    alert(brokencart);
+
+                    if(($.inArray(String(name), brokencart)) == -1){
+                        
+                            document.write('<div style="display:none">');
+                    
+                    }
+                    else{
+                        document.write('<div>');
+                    }   
+                }
+
+                function buttonfiller(elID){
+                    var buttons = document.getElementById(elID);
+                                      
+                    var name = elID;
+
+                    name = String(name);
+
+                    var qty = getCookie(name);
+
+                    buttonfill = '<input type="number" issueID={{ issue.id }} id="{{ issue.id }}-txt'+'"'+'value=' + qty + ">"                
+                                            
+                    buttons.innerHTML = buttonfill;
+                } 
+
+
+
+                hideOrSeek("{{ issue.id }}")
+
+            </script>
+
+            <!-- div from loop -->
+                <div class="row" data-right-height> 
+                    <div>
+                        <h3>{{ issue.name }}</h3>'
+                        <figure data-right-height-content>
+                            <a href="{{issue.get_absolute_url}}">
+                                <img  style="margin: 0 auto; max-height: 300px" src="{{MEDIA_URL}}{{ issue.cover_image }}">
+                            </a>    
+                        </figure>
+                
+
+                        <div align = "center"> 
+                            <h4>Print $10</h4>
+                            <h4>Quantity</h4> 
+                            <div id="{{issue.id}}"><input type="number"  id="{{issue.id}}-txt" name="issues_{{issue.id}}" value=0  size = 2  placeholder = /> </div>
+                        
+                            <script type="text/javascript">
+                               
+                            buttonfiller("{{issue.id}}");
+                                
+                            </script>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        {% endfor %}
+        </div>
+    </div> 
+<div><input type='button' align = "center" class:"btn-custom" onclick='javascript: littleoldlady("nope");' value='Update Cart'/> </div>
+</form>
+
+<div>
+    <div>
+    
+        {% include 'stripeJS.html' %}
+        <script src="{% static 'magazine/js/right-height.js' %}"></script>
+        <script>
+            rightHeight.init();
+        </script>
+
+<div style="margin: 40px auto 0px auto; background: #eee; max-width: 400px; padding: 20px;">
+        <div class="form-container active">
+            <form action="/stripeSubmit" method="post" id="payment-form">{% csrf_token %} 
+                <h2 class="signup-subheading">Checkout</h2>
+                </div>
+                <h3 class="signup-subheading">Billing Address</h3>
+                {% include 'payment_form.html' %}          
+
+   <!--
+
+// below are prototype functions I wrote and occasionally drew code from
+
+
+
+// populates cart with random values for testing
+
+            function populatecart(){
+
+                deleteCookie("cart");
+                setCookie("cart", "26&23&7&15");
+                setCookie("26", 4);
+                setCookie(23,2);
+                setCookie(7,1);
+                setCookie("15", "6");
+            }
+
+
+// reads the cart
+
+   function cartRead(elID) {
+        alert("test!!!");
+        var cart = getCookie("cart");
+        var brokencart = cart.split(",");
+            //maybe stack array with qty?? ie flip through the whole shebang
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    return true;
+                }
+        }
+    }
+
+// for money purposes
+
+    function updateSubtotal(void){
+        var subtotal = getCookie("total");
+        subtotal = parseInt(total) * 10;
+        document.getElementById(amtOwed).value = subtotal;
+    }
+
+
+
+// longer / original prototype for addqty
+    function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+    }
+
+// to be used to decrement by one
+    function subtractQty(elID) {
+        document.getElementById(elID).value--;
+    alert("Running Test");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = getCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null || qty < 1) {
+            alert("not in cart!");
+            return;
+            }
+        else if (qty - 1 == 0){
+            deleteCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+            
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+
+            setCookie("total", newtotal);
+
+            var brokencart = cart.split(",");
+
+            for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    if (i == 0){
+                        alert("first!");
+                        if (brokencart.length - 1 == 0) {
+                            alert("nothing left in cart!");
+                            deleteCookie("cart");
+                        }
+                        else {
+                            newcart = brokencart.splice(i, 2);
+                            alert(brokencart);
+                            newcart = newcart.join();
+                            setCookie("cart",newcart);
+                            var testerboo = getCookie("cart");
+                            alert(testerboo);
+                        }
+                    }
+                    else{
+                        alert("middle! or last!");
+                        newcart = brokencart.splice((i-1), 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+            };
+            
+        }
+        else {
+            alert("already in cart!!, but not last one");
+            var newqty = parseInt(qty) - 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+            
+            setCookie("total", newtotal);
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+        updateSubtotal();
+    }
+
+
+// Removes elt from cart
+function zeroQty(elID) {
+    document.getElementById(elID).value = 0;
+    alert("Running Test");
+
+    var name = elID;
+    alert(name);
+        // if cookie exists, update, else make cookie 
+
+    var qty = getCookie(name);
+    
+    var total = getCookie("total");
+    var newtotal = parseInt(total) - qty;
+            
+    setCookie("total", newtotal);
+
+    deleteCookie(name);
+
+    var cart = getCookie("cart");
+
+        alert("In Cart is:");
+        alert(cart);
+        
+        var brokencart = cart.split(",");
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+            if (brokencart[i] == name) {
+                alert("win!");
+                if (i == 0){
+                    alert("first!");
+                    if (brokencart.length - 1 == 0) {
+                        alert("nothing left in cart!");
+                        deleteCookie("cart");
+                    }
+                    else {
+                        newcart = brokencart.splice(i, 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+                else{
+                    alert("middle! or last!");
+                    newcart = brokencart.splice((i-1), 2);
+                    alert(brokencart);
+                    newcart = newcart.join();
+                    setCookie("cart",newcart);
+                    var testerboo = getCookie("cart");
+                    alert(testerboo);
+                }
+            }
+        };
+
+    updateSubtotal();
+    location.reload();
+}
+
+
+// updates values based on text form
+function updateQty(elID) {
+    var newqty = document.getElementById(elID).value;
+    var name = elID;
+
+    var oldqty = getCookie(name);
+
+    var diff = oldqty - newqty;
+
+    setCookie(name,newqty);
+
+    var total = getCookie("total");
+    total = parseInt(total) - diff;
+
+    setCookie("total",total);
+
+    updateSubtotal();
+
+    alert("Running Test");
+
+}
+
+-->
+
+
+
+{% endblock %}

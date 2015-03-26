@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template.context import RequestContext
 # from .models import Article, Content, Issue , Subscriber# '.' signifies the current directory
-from .models import Article, Content, Image, Issue, Contributor # '.' signifies the current directory
+from .models import Article, Content, Image, Issue, Contributor, Subscriber, SubManager # '.' signifies the current directory
 from collections import OrderedDict
 from itertools import chain
 import json
@@ -193,7 +193,19 @@ def shop(request):
 		'issues': all_issues_sorted,
 		'page': 'shop',
 	}
-	template_name = 'shop.html'
+	template_name = 'testshop.html'
+	return render_to_response(template_name, data, context_instance=RequestContext(request))
+
+def cart(request):
+	selected_issues = Issue.objects.all()
+	season = {'Winter': 0, 'Spring': 1, 'Commencement': 2, 'Fall': 3}
+	#all_issues_sorted = reversed(sorted(all_issues, key=lambda i: i.year))
+	selected_issues_sorted = reversed(sorted(selected_issues, key=lambda i: i.year * 10 + season[i.issue]))
+	data = {
+		'issues': selected_issues_sorted,
+		'page': 'shop',
+	}
+	template_name = 'testcart.html'
 	return render_to_response(template_name, data, context_instance=RequestContext(request))
 
 def onefifty(request):
@@ -203,3 +215,18 @@ def onefifty(request):
 def comp(request):
 	template_name = 'comp.html'
 	return render_to_response(template_name, context_instance=RequestContext(request))
+
+def subscription_admin_login(request):
+	template_name = 'testsubscription_admin_login.html'
+	data = {
+		'admins': SubManager.objects.all()
+	}
+	return render_to_response(template_name, data, context_instance=RequestContext(request))
+
+def subscription_admin(request):
+	all_subscribers = Subscriber.objects.all()
+	data = {
+		'subscribers': all_subscribers
+	}
+	template_name = 'testsubsciption_admin.html'
+	return render_to_response(template_name, data, context_instance=RequestContext(request))

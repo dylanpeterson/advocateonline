@@ -1,0 +1,1812 @@
+ alert("remember to delete this!");
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        //var brokencart = thingsincart.split("&");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+        alert(brokencart);
+
+
+
+
+
+
+{% extends "base_original.html" %}{% block content %}
+{% load staticfiles %}
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="js/simpleCart.js"></script>
+
+
+<div class="container">
+    <h1 class="header">SHOP</h1>
+
+    <p class = "text" style="margin-bottom: 20px;"> Welcome to The Harvard Advocate's Store! Below you can find back issues that you may purchase. All issues are $10 (domestic shipping $2; international shipping $5) unless otherwise indicated. Check back with us for Advogear as well. You can use the online checkout system by clicking "Add to Cart" below the thumbnails.</p>
+
+    
+
+
+<div class="simpleCart_shelfItem">
+    <h2 class="item_name"> Awesome T-shirt </h2>
+    <input type="text" value="1" class="item_Quantity">
+    <span class="item_price">$35.99</span>
+    <a class="item_add" href="javascript:;"> Add to Cart </a>
+</div>
+
+<div class="simpleCart_shelfItem">
+        <img src="/images/item_thumb.jpg" class="item_thumb" />
+        <h2 class="item_name"> Awesome T-shirt </h2>
+        <select class="item_size">
+            <option value="Small"> Small </option>
+            <option value="Medium"> Medium </option>
+            <option value="Large"> Large </option>
+        </select>
+        <input type="text" value="1" class="item_Quantity">
+        <span class="item_price">$35.99</span>
+        <a class="item_add" href="javascript:;"> Add to Cart </a>
+    </div>
+
+simpleCart({
+        cartColumns: [
+            { attr: "name" , label: "Name" } ,
+            { attr: "price" , label: "Price", view: 'currency' } ,
+            { view: "decrement" , label: false , text: "-" } ,
+            { attr: "quantity" , label: "Qty" } ,
+            { view: "increment" , label: false , text: "+" } ,
+            { attr: "total" , label: "SubTotal", view: 'currency' } ,
+            { view: "remove" , text: "Remove" , label: false }
+        ]
+    });
+
+
+<script src="simpleCart.js"></script>
+    <script>
+        simpleCart({
+            checkout: { 
+                type: "PayPal" , 
+                email: "contact@theharvardadvocate.com" 
+            },
+            tax:        0.000,
+            currency:   "USD"
+        }); 
+    </script>
+
+
+<div>
+        {% for issue in issues %}
+            {% if forloop.counter0|divisibleby:4 %}
+                <div class="row" style="border-bottom: 1px solid black;" data-right-height>
+            {% endif %}
+            <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
+
+               <div class="simpleCart_shelfItem">
+        <img src="/images/item_thumb.jpg" class="item_thumb" />
+                    <h3>{{ issue.name }}</h3>
+                    {% if issue.cover_image and issue.cover_image|length > 0 %}
+                    <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}{{ issue.cover_image }}"></a></figure>
+                {% else %}
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}image-not-available.jpg"></a></figure>
+                
+                {% endif %}
+        <input type="text" value="1" class="item_Quantity">
+        <h4>Print $10</h4> 
+        <a class="item_add" href="javascript:;"> Add to Cart </a>
+
+
+
+                <!-- How to check if image exists: 
+                http://stackoverflow.com/questions/6637168/python-django-templates-and-testing-if-a-variable-is-null-or-empty-string?rq=1
+                http://stackoverflow.com/questions/12507281/determine-empty-template-variable-in-django -->
+                
+                
+                
+
+                <div align = "center" style="margin-bottom: 20px;">
+
+                    {% if issue.name = 'Winter 2014' %}
+                        <h5>Please contact our <a href="mailto:contact@theharvardadvocate.com">circulation manager</a> if you are interested in buying this issue.</h5>
+                    {% else %}
+                                 
+                    <input type='button' class="addtocart" issueID={{issue.id}} onclick='javascript: addQty("{{issue.id}}" );' value='Add to Cart'/> 
+                {% endif %}
+
+                </div>
+
+            </div>
+        </div>
+
+            {% if forloop.counter|divisibleby:4 %}
+                </div>
+            {% endif %}
+
+
+        {% endfor %}
+
+     </div>    
+
+
+<script type="text/javascript">
+simpleCart({
+        
+        // array representing the format and columns of the cart, see 
+        // the cart columns documentation
+        cartColumns: [
+            { attr: "name" , label: "Name" },
+            { attr: "price" , label: "Price", view: 'currency' },
+            { view: "decrement" , label: false },
+            { attr: "quantity" , label: "Qty" },
+            { view: "increment" , label: false },
+            { attr: "total" , label: "SubTotal", view: 'currency' },
+            { view: "remove" , text: "Remove" , label: false }
+        ],
+        
+        // "div" or "table" - builds the cart as a table or collection of divs
+        cartStyle: "div", 
+        
+        // how simpleCart should checkout, see the checkout reference for more info 
+        checkout: { 
+            type: "PayPal" , 
+            email: "you@yours.com" 
+        },
+        
+        // set the currency, see the currency reference for more info
+        currency: "USD",
+        
+        // collection of arbitrary data you may want to store with the cart, 
+        // such as customer info
+        data: {},
+        
+        // set the cart langauge (may be used for checkout)
+        language: "english-us",
+        
+        // array of item fields that will not be sent to checkout
+        excludeFromCheckout: [],
+        
+        // custom function to add shipping cost
+        shippingCustom: null,
+        
+        // flat rate shipping option
+        shippingFlatRate: 0,
+        
+        // added shipping based on this value multiplied by the cart quantity
+        shippingQuantityRate: 0,
+        
+        // added shipping based on this value multiplied by the cart subtotal
+        shippingTotalRate: 0,
+        
+        // tax rate applied to cart subtotal
+        taxRate: 0,
+        
+        // true if tax should be applied to shipping
+        taxShipping: false,
+        
+        // event callbacks 
+        beforeAdd               : null,
+        afterAdd                : null,
+        load                    : null,
+        beforeSave              : null,
+        afterSave               : null,
+        update                  : null,
+        ready                   : null,
+        checkoutSuccess             : null,
+        checkoutFail                : null,
+        beforeCheckout              : null
+    });
+</script>
+
+
+{% extends "base_original.html" %}{% block content %}
+{% load staticfiles %}
+
+<div>
+<!-- create a checkout button -->
+<a href="javascript:;" class="simpleCart_checkout"></a>
+
+<!-- button to empty the cart -->
+<a href="javascript:;" class="simpleCart_empty"></a>
+
+<!-- show the cart -->
+<div class="simpleCart_items"></div>
+
+<!-- cart total (ex. $23.11)-->
+<div class="simpleCart_total"></div>
+
+<!-- cart quantity (ex. 3) -->
+<div class="simpleCart_quantity"></div>
+
+<!-- tax cost (ex. $1.38) -->
+<div class="simpleCart_tax"></div>
+
+<!-- tax rate (ex. %0.6) -->
+<div class="simpleCart_taxRate"></div>
+
+<!-- shipping (ex. $5.00) -->
+<div class="simpleCart_shipping"></div>
+
+<!-- grand total, including tax and shipping (ex. $28.49) -->
+<div class="simpleCart_grandTotal"></div>
+
+
+<div class="item-name">Awesome T-Shirt</div>
+
+<div class="item-price">$139.86</div>
+
+<div class="item-decrement "><a href="javascript:;" class="simpleCart_decrement">-</a></div>
+
+<div class="item-decrement "><a href="javascript:;" class="simpleCart_decrement">Less</a></div>
+
+<div class="item-increment "><a href="javascript:;" class="simpleCart_increment">+</a></div>
+
+<div class="item-remove "><a href="javascript:;" class="simpleCart_remove">X</a></div>
+
+<div class="item-pageLink"><a href="[value-of-pageLink-attr]">View More</a></div>
+
+<div class="item-thumb "><img src="[value-of-thumb-attr]"></div>
+
+<div class="item-quantity"><input type="text" value="[item-quantity]" class="simpleCart_input"></div>
+
+<div class="simpleCart_shelfItem">
+    <h2 class="item_name"> Awesome T-shirt </h2>
+<p>    <select class="item_size">
+        <option value="Small"> Small </option>
+        <option value="Medium"> Medium </option>
+        <option value="Large"> Large </option>
+    </select><br>
+    <input type="text" value="1" class="item_Quantity"><br>
+    <span class="item_price">$35.99</span><br>
+<a class="item_add" href="javascript:;"> Add to Cart </a></p>
+</div>
+
+
+<script src="simpleCart.js"></script>
+<script>
+  simpleCart({
+    // array representing the format and columns of the cart,
+    // see the cart columns documentation
+    cartColumns: [
+        { attr: "name", label: "Name"},
+        { view: "currency", attr: "price", label: "Price"},
+        { view: "decrement", label: false},
+        { attr: "quantity", label: "Qty"},
+        { view: "increment", label: false},
+        { view: "currency", attr: "total", label: "SubTotal" },
+        { view: "remove", text: "Remove", label: false}
+    ],
+
+    // "div" or "table" - builds the cart as a 
+    // table or collection of divs
+    cartStyle: "div", 
+
+    // how simpleCart should checkout, see the 
+    // checkout reference for more info 
+    checkout: { 
+        type: "PayPal" , 
+        email: "you@yours.com" 
+    },
+
+    // set the currency, see the currency 
+    // reference for more info
+    currency: "USD",
+
+    // collection of arbitrary data you may want to store 
+    // with the cart, such as customer info
+    data: {},
+
+    // set the cart langauge 
+    // (may be used for checkout)
+    language: "english-us",
+
+    // array of item fields that will not be 
+    // sent to checkout
+    excludeFromCheckout: [],
+
+    // custom function to add shipping cost
+    shippingCustom: null,
+
+    // flat rate shipping option
+    shippingFlatRate: 0,
+
+    // added shipping based on this value 
+    // multiplied by the cart quantity
+    shippingQuantityRate: 0,
+
+    // added shipping based on this value 
+    // multiplied by the cart subtotal
+    shippingTotalRate: 0,
+
+    // tax rate applied to cart subtotal
+    taxRate: 0,
+
+    // true if tax should be applied to shipping
+    taxShipping: false,
+
+    // event callbacks 
+    beforeAdd           : null,
+    afterAdd            : null,
+    load                : null,
+    beforeSave      : null,
+    afterSave           : null,
+    update          : null,
+    ready           : null,
+    checkoutSuccess : null,
+    checkoutFail        : null,
+    beforeCheckout      : null,
+        beforeRemove           : null
+});
+</script>
+
+
+<div class="simpleCart_shelfItem">
+  <h2 class="item_name"> Awesome T-shirt </h2>
+<p>  <input type="text" value="1" class="item_Quantity"><br>
+  <span class="item_price">$35.99</span><br>
+  <a class="item_add" href="javascript:;"> Add to Cart </a></p>
+</div>
+
+
+<span class="simpleCart_quantity"></span> items - <span class="simpleCart_total"></span>
+<a href="javascript:;" class="simpleCart_checkout">Checkout</a>
+
+
+
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+<!-- <script type="text/javascript">
+function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+    }
+
+
+
+
+
+</script> 
+             
+           
+    </div>
+
+</div>
+
+<hr>
+    
+    {% csrf_token %} 
+    </form>
+
+
+
+
+<h1>DONE</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h1 class="header">CART</h1>
+
+    <div align = "center" style="margin-bottom: 15px; margin-top: 15px">
+
+        <form  style="text-align: center;" action="/cart" method="post" id="shopping-cart">
+
+        <a class="no-decoration top-line" style="font-size: 30px; font-family: league_gothicregular;" href="/shop">Return to Shop</a>
+    </div>
+
+     <div style-"margin-top: 20px, text-align: center;">
+
+        <div class="row" data-right-height>
+
+    {% for issue in issues %}
+            
+            <div class="row" style="border-bottom: 1px solid black;" data-right-height>
+
+            <script type="text/javascript">
+
+            function getCookie(name)
+            {
+                var re = new RegExp(name + "=([^;]+)");
+                var value = re.exec(document.cookie);
+                return (value != null) ? unescape(value[1]) : null;
+            }
+
+            var today = new Date();
+            var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+      
+// could have a function here called generate page??
+            var name = "{{ issue.id }}";
+            name = String(name);
+            
+            var cart = getCookie("cart");
+            cart = String(cart);
+      
+            var qty = getCookie(name);
+        
+            var brokencart = cart.split("&");
+
+            for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (String(brokencart[i]) == name) {
+                    alert(name);
+                    document.write('<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" id="{{issue.id}} -div" style="visibility: visible"><p>showing</p>');
+                }
+                else if (i == brokencart.length - 1 && String(brokencart[i]) != name){
+                    document.write('<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3" id="{{issue.id}} -div" style="display: none">');
+                }
+            }
+
+            </script>
+
+
+
+        <div class="row" data-right-height> </div><div> <h3>{{ issue.name }}</h3>');
+        
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img  style="margin: 0 auto; width: relative; height: 100%; max-height: 300px;" src="{{MEDIA_URL}}{{ issue.cover_image }}"></a></figure>');
+                
+
+                <div align = "center"> <h4>Print $10</h4> <h4>Quantity</h4> <input type="text"  id="{{issue.id}}" name="issues_{{issue.id}}" value=0  size = 2  placeholder =/> </div>');
+        
+
+
+                <h3>{{ issue.name }}</h3>
+                --><!-- How to check if image exists: 
+                http://stackoverflow.com/questions/6637168/python-django-templates-and-testing-if-a-variable-is-null-or-empty-string?rq=1
+                http://stackoverflow.com/questions/12507281/determine-empty-template-variable-in-django -->
+                <!--{% if issue.cover_image and issue.cover_image|length > 0 %}
+                
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}{{ issue.cover_image }}"></a></figure>
+                {% else %}
+                <figure data-right-height-content><a href="{{issue.get_absolute_url}}"><img class='img-responsive' style="margin: 0 auto;" src="{{MEDIA_URL}}image-not-available.jpg"></a></figure>
+                
+                {% endif %}
+
+                <div align = "center" style="margin-bottom: 20px;">
+
+                                
+                    <input type='button' class="addtocart" issueID={{issue.id}} onclick='javascript: addQty("{{issue.id}}" );' value='Add to Cart'/> 
+           
+                </div>
+            </div>
+            {% if forloop.counter|divisibleby:4 %}
+                </div>
+            {% endif %}
+
+        {% endfor %}
+
+     </div>    
+    {% csrf_token %}
+
+    </form>
+
+
+
+            <script type="text/javascript">
+            alert("test!!!");
+
+            function getCookie(name)
+            {
+                var re = new RegExp(name + "=([^;]+)");
+                var value = re.exec(document.cookie);
+                return (value != null) ? unescape(value[1]) : null;
+            }
+
+            var today = new Date();
+            var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+alert("test!!!");
+
+        var name = {{issue.id}};
+
+        alert("test!!!");
+        alert(name);
+        var cart = getCookie("cart");
+        alert("cart");
+        alert(cart);
+        var brokencart = cart.split("&");
+            //maybe stack array with qty?? ie flip through the whole shebang
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    document.getElementById("{{issue.id}} -div").style.visibility = "hidden";
+                }
+        }
+    }
+    </script>
+
+
+<script type="text/javascript">
+    
+    function testadd(elID){document.getElementById(elID).value++}
+
+    function addQty(elID) {
+    alert("Running Test");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+        // if everything broke then its because i just changed the below from read to get cookie
+
+        var qty = getCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "&" + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        alert("remember to delete this!");
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        var brokencart = thingsincart.split("&");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+        alert(brokencart);
+
+    }
+
+
+
+
+    function addQty2(elID) {
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        var total = getCookie(total);
+
+        if (qty == "NaN") {
+            alert(heyy);
+            qty++; 
+            deleteCookie(name);
+            setCookie(name, qty);
+            total++;
+            setCookie("total",total);
+        }
+        else {
+            setCookie(name,qty);
+            alert(hey);
+            var cart = getCookie(cart);
+            var newcart = (cart + name);
+
+            setCookie (cart, newcart);
+            total++;
+            setCookie("total",total);
+        }
+
+        var testqty = getCookie(name);
+        
+    }
+
+    function getCookie(name)
+    {
+        var re = new RegExp(name + "=([^;]+)");
+        var value = re.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+     }
+
+    var today = new Date();
+    var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+    function setCookie(name, value)
+    {
+        document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+    }
+
+    function storeValues(form)  
+    {
+        setCookie("field1", form.field1.value);
+        setCookie("field2", form.field2.value);
+        setCookie("field3", form.field3.value);
+        setCookie("field4", form.field4.value);
+        return true;
+    }
+
+    function useless (){
+        if(field1 = getCookie("field1")) document.myForm.field1.value = field1;
+        if(field2 = getCookie("field2")) document.myForm.field2.value = field2;
+        if(field3 = getCookie("field3")) document.myForm.field3.value = field3;
+        if(field4 = getCookie("field4")) document.myForm.field4.value = field4;
+    }
+
+    var expired = new Date(today.getTime() - 24 * 3600 * 1000); // less 24 hours
+
+    function deleteCookie(name)
+    {
+        document.cookie=name + "=null; path=/; expires=" + expired.toGMTString();
+    }
+
+
+    function clearCookies()
+      {
+        deleteCookie("field1");
+        deleteCookie("field2");
+        deleteCookie("field3"); 
+        deleteCookie("field4");
+        alert('Your cookies have been deleted!');
+      }
+    
+
+
+function createCookie(name,days,value) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+
+function readCookie(name) { //cookie reader function
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return       c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+function eraseCookie(name) { //cookie eraser function
+        createCookie(name,"",-1);
+    }
+
+    createCookie("test", 1, 1);
+    var mycookie= readCookie("test");
+    mycookie = parseFloat(mycookie);
+    console.log(mycookie);
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+    }
+
+
+
+
+
+</script> 
+             
+           </div>
+
+ 
+    </div>
+
+</div>
+
+<hr>
+    
+    {% csrf_token %} 
+    </form>
+
+
+
+
+
+
+    <script type="text/javascript">
+
+    function cartRead(elID) {
+        alert("test!!!");
+        var cart = getCookie("cart");
+        var brokencart = cart.split(",");
+            //maybe stack array with qty?? ie flip through the whole shebang
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    return true;
+                }
+        }
+    }
+
+    function updateSubtotal(void){
+        var subtotal = getCookie("total");
+        subtotal = parseInt(total) * 10;
+        document.getElementById(amtOwed).value = subtotal;
+    }
+
+
+function updateQty(elID) {
+    var newqty = document.getElementById(elID).value;
+    var name = elID;
+
+    var oldqty = getCookie(name);
+
+    var diff = oldqty - newqty;
+
+    setCookie(name,newqty);
+
+    var total = getCookie("total");
+    total = parseInt(total) - diff;
+
+    setCookie("total",total);
+
+    updateSubtotal();
+
+    alert("Running Test");
+
+}
+
+
+    function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+    }
+
+
+    function subtractQty(elID) {
+        document.getElementById(elID).value--;
+    alert("Running Test");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = getCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null || qty < 1) {
+            alert("not in cart!");
+            return;
+            }
+        else if (qty - 1 == 0){
+            deleteCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+            
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+
+            setCookie("total", newtotal);
+
+            var brokencart = cart.split(",");
+
+            for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    if (i == 0){
+                        alert("first!");
+                        if (brokencart.length - 1 == 0) {
+                            alert("nothing left in cart!");
+                            deleteCookie("cart");
+                        }
+                        else {
+                            newcart = brokencart.splice(i, 2);
+                            alert(brokencart);
+                            newcart = newcart.join();
+                            setCookie("cart",newcart);
+                            var testerboo = getCookie("cart");
+                            alert(testerboo);
+                        }
+                    }
+                    else{
+                        alert("middle! or last!");
+                        newcart = brokencart.splice((i-1), 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+            };
+            
+        }
+        else {
+            alert("already in cart!!, but not last one");
+            var newqty = parseInt(qty) - 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+            
+            setCookie("total", newtotal);
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+        updateSubtotal();
+    }
+
+function zeroQty(elID) {
+    document.getElementById(elID).value = 0;
+    alert("Running Test");
+
+    var name = elID;
+    alert(name);
+        // if cookie exists, update, else make cookie 
+
+    var qty = getCookie(name);
+    
+    var total = getCookie("total");
+    var newtotal = parseInt(total) - qty;
+            
+    setCookie("total", newtotal);
+
+    deleteCookie(name);
+
+    var cart = getCookie("cart");
+
+        alert("In Cart is:");
+        alert(cart);
+        
+        var brokencart = cart.split(",");
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+            if (brokencart[i] == name) {
+                alert("win!");
+                if (i == 0){
+                    alert("first!");
+                    if (brokencart.length - 1 == 0) {
+                        alert("nothing left in cart!");
+                        deleteCookie("cart");
+                    }
+                    else {
+                        newcart = brokencart.splice(i, 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+                else{
+                    alert("middle! or last!");
+                    newcart = brokencart.splice((i-1), 2);
+                    alert(brokencart);
+                    newcart = newcart.join();
+                    setCookie("cart",newcart);
+                    var testerboo = getCookie("cart");
+                    alert(testerboo);
+                }
+            }
+        };
+
+    updateSubtotal();
+    location.reload();
+}
+
+function updateQty(elID) {
+    var newqty = document.getElementById(elID).value;
+    var name = elID;
+
+    var oldqty = getCookie(name);
+
+    var diff = oldqty - newqty;
+
+    setCookie(name,newqty);
+
+    var total = getCookie("total");
+    total = parseInt(total) - diff;
+
+    setCookie("total",total);
+
+    updateSubtotal();
+
+    alert("Running Test");
+
+}
+
+
+    function getCookie(name)
+    {
+        var re = new RegExp(name + "=([^;]+)");
+        var value = re.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+     }
+
+    var today = new Date();
+    var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+    function setCookie(name, value)
+    {
+        document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+    }
+
+    function storeValues(form)  
+    {
+        setCookie("field1", form.field1.value);
+        setCookie("field2", form.field2.value);
+        setCookie("field3", form.field3.value);
+        setCookie("field4", form.field4.value);
+        return true;
+    }
+
+    function useless (){
+        if(field1 = getCookie("field1")) document.myForm.field1.value = field1;
+        if(field2 = getCookie("field2")) document.myForm.field2.value = field2;
+        if(field3 = getCookie("field3")) document.myForm.field3.value = field3;
+        if(field4 = getCookie("field4")) document.myForm.field4.value = field4;
+    }
+
+    var expired = new Date(today.getTime() - 24 * 3600 * 1000); // less 24 hours
+
+    function deleteCookie(name)
+    {
+        document.cookie=name + "=null; path=/; expires=" + expired.toGMTString();
+    }
+
+
+    function clearCookies()
+      {
+        deleteCookie("field1");
+        deleteCookie("field2");
+        deleteCookie("field3"); 
+        deleteCookie("field4");
+        alert('Your cookies have been deleted!');
+      }
+    
+</script>
+
+
+<div style="margin: 40px auto 0px auto; background: #eee; max-width: 400px; padding: 20px;">
+        <div class="form-container active">
+            <form action="/stripeSubmit" method="post" id="payment-form">{% csrf_token %} 
+                <h2 class="signup-subheading">Checkout</h2>
+                </div>
+                <h3 class="signup-subheading">Billing Address</h3>
+                {% include 'payment_form.html' %}
+                --><!--{% include 'paymentData.html' with page="Subscribe" only  %}-->
+                
+                <!--<input name="currency_code" type="hidden" value="USD"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- old button code
+
+    document.write('<div align = "center"> <h4>Print $10</h4> <div id="{{issue.id}} -button"></div> <input type="text"  id="{{issue.id}}" name="issues_{{issue.id}}" value=0  size = 2  placeholder =/> <input type="button" class=btn-custom issueID={{issue.id}} onclick="addQty("{{issue.id}}" );" value="+"/> <br><input type="button" class=btn-custom style="margin: 10px auto 0px auto" issueID={{issue.id}} onclick="javascript: zeroQty("{{issue.id}}" );" value="Remove from Cart"/> </div> </div>');
+            document.getElementById("{{issue.id}}").setAttribute('value', qty);
+            var buttons = document.getElementById("{{issue.id}} -button");
+            buttons.innerHTML = 
+'<input type="button" class=btn-custom issueID={{issue.id}} id="{{issue.id}} -button" onclick="javascript: alert("{{issue.id}}" );" value="-"/>'; -->
+
+
+
+<script type="text/javascript">
+
+    function cartRead(elID) {
+        alert("test!!!");
+        var cart = getCookie("cart");
+        var brokencart = cart.split(",");
+            //maybe stack array with qty?? ie flip through the whole shebang
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    return true;
+                }
+        }
+    }
+
+    function updateSubtotal(void){
+        var subtotal = getCookie("total");
+        subtotal = parseInt(total) * 10;
+        document.getElementById(amtOwed).value = subtotal;
+    }
+
+
+function updateQty(elID) {
+    var newqty = document.getElementById(elID).value;
+    var name = elID;
+
+    var oldqty = getCookie(name);
+
+    var diff = oldqty - newqty;
+
+    setCookie(name,newqty);
+
+    var total = getCookie("total");
+    total = parseInt(total) - diff;
+
+    setCookie("total",total);
+
+    updateSubtotal();
+
+    alert("Running Test");
+
+}
+
+
+    function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+    }
+
+
+    function subtractQty(elID) {
+        document.getElementById(elID).value--;
+    alert("Running Test");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = getCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null || qty < 1) {
+            alert("not in cart!");
+            return;
+            }
+        else if (qty - 1 == 0){
+            deleteCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+            
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+
+            setCookie("total", newtotal);
+
+            var brokencart = cart.split(",");
+
+            for (var i = 0; i <= brokencart.length - 1; i++) {
+                if (brokencart[i] == name) {
+                    alert("win!");
+                    if (i == 0){
+                        alert("first!");
+                        if (brokencart.length - 1 == 0) {
+                            alert("nothing left in cart!");
+                            deleteCookie("cart");
+                        }
+                        else {
+                            newcart = brokencart.splice(i, 2);
+                            alert(brokencart);
+                            newcart = newcart.join();
+                            setCookie("cart",newcart);
+                            var testerboo = getCookie("cart");
+                            alert(testerboo);
+                        }
+                    }
+                    else{
+                        alert("middle! or last!");
+                        newcart = brokencart.splice((i-1), 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+            };
+            
+        }
+        else {
+            alert("already in cart!!, but not last one");
+            var newqty = parseInt(qty) - 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) - 1;
+            
+            setCookie("total", newtotal);
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+
+        updateSubtotal();
+    }
+
+function zeroQty(elID) {
+    document.getElementById(elID).value = 0;
+    alert("Running Test");
+
+    var name = elID;
+    alert(name);
+        // if cookie exists, update, else make cookie 
+
+    var qty = getCookie(name);
+    
+    var total = getCookie("total");
+    var newtotal = parseInt(total) - qty;
+            
+    setCookie("total", newtotal);
+
+    deleteCookie(name);
+
+    var cart = getCookie("cart");
+
+        alert("In Cart is:");
+        alert(cart);
+        
+        var brokencart = cart.split(",");
+
+        for (var i = 0; i <= brokencart.length - 1; i++) {
+            if (brokencart[i] == name) {
+                alert("win!");
+                if (i == 0){
+                    alert("first!");
+                    if (brokencart.length - 1 == 0) {
+                        alert("nothing left in cart!");
+                        deleteCookie("cart");
+                    }
+                    else {
+                        newcart = brokencart.splice(i, 2);
+                        alert(brokencart);
+                        newcart = newcart.join();
+                        setCookie("cart",newcart);
+                        var testerboo = getCookie("cart");
+                        alert(testerboo);
+                    }
+                }
+                else{
+                    alert("middle! or last!");
+                    newcart = brokencart.splice((i-1), 2);
+                    alert(brokencart);
+                    newcart = newcart.join();
+                    setCookie("cart",newcart);
+                    var testerboo = getCookie("cart");
+                    alert(testerboo);
+                }
+            }
+        };
+
+    updateSubtotal();
+    location.reload();
+}
+
+function updateQty(elID) {
+    var newqty = document.getElementById(elID).value;
+    var name = elID;
+
+    var oldqty = getCookie(name);
+
+    var diff = oldqty - newqty;
+
+    setCookie(name,newqty);
+
+    var total = getCookie("total");
+    total = parseInt(total) - diff;
+
+    setCookie("total",total);
+
+    updateSubtotal();
+
+    alert("Running Test");
+
+}
+
+
+    function getCookie(name)
+    {
+        var re = new RegExp(name + "=([^;]+)");
+        var value = re.exec(document.cookie);
+        return (value != null) ? unescape(value[1]) : null;
+     }
+
+    var today = new Date();
+    var expiry = new Date(today.getTime() + 30 * 24 * 3600 * 1000); // plus 30 days
+
+    function setCookie(name, value)
+    {
+        document.cookie=name + "=" + escape(value) + "; path=/; expires=" + expiry.toGMTString();
+    }
+
+    function storeValues(form)  
+    {
+        setCookie("field1", form.field1.value);
+        setCookie("field2", form.field2.value);
+        setCookie("field3", form.field3.value);
+        setCookie("field4", form.field4.value);
+        return true;
+    }
+
+    function useless (){
+        if(field1 = getCookie("field1")) document.myForm.field1.value = field1;
+        if(field2 = getCookie("field2")) document.myForm.field2.value = field2;
+        if(field3 = getCookie("field3")) document.myForm.field3.value = field3;
+        if(field4 = getCookie("field4")) document.myForm.field4.value = field4;
+    }
+
+    var expired = new Date(today.getTime() - 24 * 3600 * 1000); // less 24 hours
+
+    function deleteCookie(name)
+    {
+        document.cookie=name + "=null; path=/; expires=" + expired.toGMTString();
+    }
+
+
+    function clearCookies()
+      {
+        deleteCookie("field1");
+        deleteCookie("field2");
+        deleteCookie("field3"); 
+        deleteCookie("field4");
+        alert('Your cookies have been deleted!');
+      }
+    
+
+
+    <!--<input name="currency_code" type="hidden" value="USD"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  $('.active form').card({
+        container: '.card-wrapper',
+        expiryInput: 'input[name="exp-month"], input[name="exp-year"]'
+  })
+
+  // This identifies your website in the createToken call below
+  //Stripe.setPublishableKey('pk_test_7mkjcG8fQj3qmdhCgP92Pq4g');
+  Stripe.setPublishableKey('pk_live_D7yZGFFO2av0FKrXYKwGU6Ye');
+  
+  var stripeResponseHandler= function(status, response) {
+  var $form = $('#payment-form');
+
+  if (response.error) {
+    // Show the errors on the form
+    $form.find('.payment-errors').text(response.error.message);
+    $form.find('button').prop('disabled', false);
+  } else {
+    // response contains id and card, which contains additional card details
+    var token = response.id;
+    // Insert the token into the form so it gets submitted to the server
+    $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+    $form.get(0).submit();
+  }
+};
+
+jQuery(function($) {
+  $('#payment-form').submit(function(event) {
+    var $form = $(this);
+
+    // Disable the submit button to prevent repeated clicks
+    $form.find('button').prop('disabled', true);
+
+    Stripe.card.createToken($form, stripeResponseHandler);
+
+    // Prevent the form from submitting with the default action
+    return false;
+  });
+});
+
+</script>
+
+
+
+--><!-- old button code
+
+    document.write('<div align = "center"> <h4>Print $10</h4> <div id="{{issue.id}} -button"></div> <input type="text"  id="{{issue.id}}" name="issues_{{issue.id}}" value=0  size = 2  placeholder =/> <input type="button" class=btn-custom issueID={{issue.id}} onclick="addQty("{{issue.id}}" );" value="+"/> <br><input type="button" class=btn-custom style="margin: 10px auto 0px auto" issueID={{issue.id}} onclick="javascript: zeroQty("{{issue.id}}" );" value="Remove from Cart"/> </div> </div>');
+            document.getElementById("{{issue.id}}").setAttribute('value', qty);
+            var buttons = document.getElementById("{{issue.id}} -button");
+            buttons.innerHTML = 
+'<input type="button" class=btn-custom issueID={{issue.id}} id="{{issue.id}} -button" onclick="javascript: alert("{{issue.id}}" );" value="-"/>'; -->
+</script>
+
+
+
+*/
+
+    /*function addQty(elID) {
+    alert("Running Test");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+        // if everything broke then its because i just changed the below from read to get cookie
+
+        var qty = getCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            alert("movingintoifstatement");
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "&" + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        alert("remember to delete this!");
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        var brokencart = thingsincart.split("&");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);
+        alert(brokencart);
+
+    }*/
+    /*function addQty(elID) {
+
+        document.getElementById(elID).value++;
+        alert("Running Test dont forget to do the subtotal stuffz later!?");
+       
+        var name = elID;
+        alert(name);
+        // if cookie exists, update, else make cookie 
+
+        var qty = readCookie(name);
+        alert(qty);
+        
+        alert("movingintoifstatement");
+
+        if (qty == "NaN" || qty == null) {
+            setCookie(name,1);
+            var qty = readCookie(name);
+            
+            var cart = getCookie("cart");
+
+            alert("In Cart is:");
+            alert(cart);
+
+            if (cart == "NaN" || cart == null) {
+            setCookie("cart",name);
+            setCookie("total",1);
+            setCookie(name,1);
+            var working = getCookie(name);
+            alert("catch?");
+            alert(working);
+            
+            }
+
+            else {
+            
+            var incart = getCookie("cart");
+            var newcart = String(incart) + "," + String(name);
+            setCookie("cart",newcart);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+            }
+        }
+        else {
+             alert("already in cart!!");
+            var newqty = parseInt(qty) + 1; 
+
+            setCookie(name, newqty);
+            var total = getCookie("total");
+            var newtotal = parseInt(total) + 1;
+            
+            setCookie("total", newtotal);
+
+        }
+        
+        var curritemqty = getCookie(name);
+        var currthingsincart = getCookie("total");
+        var thingsincart = getCookie("cart");
+        
+        alert("Upnext is current number of item in cart then total things in cart then the cart contents");
+        alert(curritemqty);
+        alert(currthingsincart);
+        alert(thingsincart);*/
+
+    }
+
+
+
+{% endblock %}

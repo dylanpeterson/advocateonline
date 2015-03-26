@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^advertise$', 'magazine.views.advertise'),
     url(r'^150th$', 'magazine.views.onefifty'),
     url(r'^shop$', 'magazine.views.shop'),
+    url(r'^cart$', 'magazine.views.cart'),
     url(r'^comp$', 'magazine.views.comp'),
     url(r'^article/(?P<slug>[a-zA-Z\d_\-]+)/$', 'magazine.views.article'),
     # url(r'^search/q=?(?P<searchterm>[a-zA-Z\d_\-]+)/$', 'magazine.views.search'),
@@ -40,5 +41,7 @@ urlpatterns = patterns('',
     #http://stackoverflow.com/questions/901551/how-do-i-include-image-files-in-django-templates
     #http://stackoverflow.com/questions/19132123/name-settings-is-not-defined
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^subscription_admin_login$', 'magazine.views.subscription_admin_login'),
+    url(r'^subscription_admin$', 'magazine.views.subscription_admin'),
 )
 
